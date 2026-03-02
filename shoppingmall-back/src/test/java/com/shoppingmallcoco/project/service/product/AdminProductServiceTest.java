@@ -1,10 +1,15 @@
 package com.shoppingmallcoco.project.service.product;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.shoppingmallcoco.project.dto.product.ProductSaveDTO;
+import com.shoppingmallcoco.project.entity.product.CategoryEntity;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
+import com.shoppingmallcoco.project.entity.product.ProductImageEntity;
+import com.shoppingmallcoco.project.entity.product.ProductOptionEntity;
 import com.shoppingmallcoco.project.repository.product.CategoryRepository;
 import com.shoppingmallcoco.project.repository.product.ProductImageRepository;
 import com.shoppingmallcoco.project.repository.product.ProductOptionRepository;
@@ -109,5 +120,63 @@ class AdminProductServiceTest {
 		
 		// 예외 메시지가 일치하는지 확인
 		assertEquals("상품을 찾을 수 없습니다.", exception.getMessage());
+	}
+	
+	@Test
+	@DisplayName("상품 등록 로직(옵션, 이미지 포함) 성공 테스트")
+	void createProduct_Success() throws Exception {
+		// 준비 | @Value 필드 수동 주입: ReflectionTestUtils을 사용해 강제로 값을 세팅
+		ReflectionTestUtils.setField(adminProductService, "rootDir", "test-dir/");
+		
+		// 입력 데이터 셋팅
+		ProductSaveDTO dto = new ProductSaveDTO();
+		dto.setPrdName("테스트 상품1");
+		dto.setPrdPrice(15000);
+		dto.setCategoryNo(1L);
+		dto.setStatus("SALE");
+		
+		ProductSaveDTO.OptionDTO optionDto = new ProductSaveDTO.OptionDTO();
+		optionDto.setOptionName("용량");
+		optionDto.setOptionValue("50ml");
+		optionDto.setAddPrice(0);
+		optionDto.setStock(100);
+		dto.setOptions(List.of(optionDto));
+		
+		// 카테고리 Mock 동작 설정
+		CategoryEntity category = new CategoryEntity();
+		category.setCategoryNo(1L);
+		when(catRepo.findById(1L)).thenReturn(java.util.Optional.of(category));
+		
+		// 상품 저장 Mock 동작 설정
+		ProductEntity savedProduct = new ProductEntity();
+		savedProduct.setPrdNo(100L);
+		when(prdRepo.save(any(ProductEntity.class))).thenReturn(savedProduct);
+		
+		// Mock 파일(MockMultipartFile 역할) 만들기
+		MultipartFile mockFile = mock(MultipartFile.class);
+		when(mockFile.isEmpty()).thenReturn(false); // 빈 파일 아님
+		when(mockFile.getContentType()).thenReturn("image/jpeg"); // 이미지 파일 타입
+		when(mockFile.getSize()).thenReturn(1024L); // 10MB 이하 사이즈
+		when(mockFile.getOriginalFilename()).thenReturn("test.jpg");
+		
+		// 1x1 픽셀의 투명 GIF 이미지를 Base64로 디코딩하여 이미지 바이트를 생성
+		byte[] validImageBytes = Base64.getDecoder().decode("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+		
+		// Thumbnailator 라이브러리가 getInputStream()을 호출할 때마다 새로운 InputStream을 반환하도록 설정 (Fallback 로직 대비)
+		when(mockFile.getInputStream()).thenAnswer(invocation -> new ByteArrayInputStream(validImageBytes));
+		
+		List<MultipartFile> files = List.of(mockFile);
+		
+		// 실행
+		ProductEntity result = adminProductService.createProduct(dto, files);
+		
+		// 검증
+		assertNotNull(result);
+		assertEquals(100L, result.getPrdNo());
+		
+		// 부가기능(옵션, 이미지)들이 정상적으로 DB에 저장(save) 요청을 보냈는지 호출 횟수로 검증
+		verify(prdRepo, times(1)).save(any(ProductEntity.class));
+		verify(optionRepo, times(1)).save(any(ProductOptionEntity.class));
+		verify(prdImgRepo, times(1)).save(any(ProductImageEntity.class));
 	}
 }
