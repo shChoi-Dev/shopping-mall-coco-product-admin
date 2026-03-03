@@ -2,12 +2,14 @@ package com.shoppingmallcoco.project.service.product;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -178,5 +180,97 @@ class AdminProductServiceTest {
 		verify(prdRepo, times(1)).save(any(ProductEntity.class));
 		verify(optionRepo, times(1)).save(any(ProductOptionEntity.class));
 		verify(prdImgRepo, times(1)).save(any(ProductImageEntity.class));
+	}
+	
+	@Test
+	@DisplayName("상품 수정 로직(옵션, 이미지, 카테고리 변경 포함) 성공 테스트")
+	void updateProduct_Success() throws Exception {
+		// 준비
+		Long prdNo = 1L;
+		ReflectionTestUtils.setField(adminProductService, "rootDir", "test-dir/");
+		
+		// 기존 카테고리 세팅
+		CategoryEntity oldCategory = new CategoryEntity();
+		oldCategory.setCategoryNo(1L);
+		
+		// 기존 상품 엔티티 세팅 (DB 저장 상태 가정)
+		ProductEntity existingProduct = new ProductEntity();
+		existingProduct.setPrdNo(prdNo);
+		existingProduct.setPrdName("기존 상품명");
+		existingProduct.setPrdPrice(10000);
+		existingProduct.setCategory(oldCategory);
+		
+		// 기존 옵션 1개
+		ProductOptionEntity oldOption = new ProductOptionEntity();
+		oldOption.setOptionNo(10L);
+		oldOption.setOptionName("기존 용량");
+		oldOption.setOptionValue("50ml");
+		List<ProductOptionEntity> existingOptions = new ArrayList<>();
+		existingOptions.add(oldOption);
+		existingProduct.setOptions(existingOptions);
+		
+		// 기존 이미지 2개 존재
+		ProductImageEntity oldImage1 = new ProductImageEntity();
+		oldImage1.setImageUrl("http://localhost:8080/images/products/old1.jpg");
+		ProductImageEntity oldImage2 = new ProductImageEntity();
+		oldImage2.setImageUrl("http://localhost:8080/images/products/old2.jpg");
+		List<ProductImageEntity> existingImages = new ArrayList<>(List.of(oldImage1, oldImage2));
+		existingProduct.setImages(existingImages);
+		
+		// 상품 조회 시 기존 상품 반환
+		when(prdRepo.findById(prdNo)).thenReturn(java.util.Optional.of(existingProduct));
+		
+		// 새 카테고리로 변경한다고 가정
+		CategoryEntity newCategory = new CategoryEntity();
+		newCategory.setCategoryNo(2L);
+		when(catRepo.findById(2L)).thenReturn(java.util.Optional.of(newCategory));
+		
+		// 수정을 요청할 DTO 세팅
+		ProductSaveDTO dto = new ProductSaveDTO();
+		dto.setPrdName("수정된 상품명");
+		dto.setPrdPrice(15000);
+		dto.setCategoryNo(2L); // 1번에서 2번 카테고리로 변경 요청
+		
+		// 기존 옵션(10L)은 이름 수정, 새로운 옵션(옵션번호 X)은 추가
+		ProductSaveDTO.OptionDTO updateOptDto = new ProductSaveDTO.OptionDTO();
+		updateOptDto.setOptionNo(10L);
+		updateOptDto.setOptionName("수정된 용량");
+		ProductSaveDTO.OptionDTO newOptDto = new ProductSaveDTO.OptionDTO();
+		newOptDto.setOptionName("새로운 색상");
+		dto.setOptions(List.of(updateOptDto, newOptDto));
+		
+		// 이미지 요청: old1.jpg는 유지, old2.jpg는 목록에 없으므로 삭제, 그리고 새 파일 추가
+		dto.setKeptImageUrls(List.of("http://localhost:8080/images/products/old1.jpg", "NEW_FILE"));
+		
+		// Mock 이미지 파일 세팅
+		MultipartFile mockFile = mock(MultipartFile.class);
+		when(mockFile.isEmpty()).thenReturn(false);
+		when(mockFile.getContentType()).thenReturn("image/jpeg");
+		when(mockFile.getSize()).thenReturn(1024L);
+        when(mockFile.getOriginalFilename()).thenReturn("new.jpg");
+        byte[] validImageBytes = java.util.Base64.getDecoder().decode("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+        when(mockFile.getInputStream()).thenAnswer(i -> new java.io.ByteArrayInputStream(validImageBytes));
+        
+        List<MultipartFile> files = List.of(mockFile);
+        
+        // 실행
+        ProductEntity result = adminProductService.updateProduct(prdNo, dto, files);
+        
+        // 검증
+        // 기본 정보 및 카테고리가 잘 수정되었는지?
+        assertEquals("수정된 상품명", result.getPrdName());
+        assertEquals(15000, result.getPrdPrice());
+        assertEquals(2L, result.getCategory().getCategoryNo());
+        
+        // 옵션 처리가 잘 진행되었는지? (기존 1개 수정 + 신규 1개 추가 = 총 2개)
+        assertEquals(2, result.getOptions().size());
+        assertEquals("수정된 용량", result.getOptions().get(0).getOptionName());
+        assertEquals("새로운 색상", result.getOptions().get(1).getOptionName());
+        
+        // 이미지 처리가 잘 호출되었는지?
+        // old2.jpg 가 삭제 대상이 되어 deleteAll이 1번 호출되었는지 검증
+        verify(prdImgRepo, times(1)).deleteAll(anyList());
+        // NEW_FILE 처리를 위해 saveSingleImage가 작동하여 save가 1번 호출되었는지 검증
+        verify(prdImgRepo, times(1)).save(any(ProductImageEntity.class));
 	}
 }
