@@ -6,17 +6,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.shoppingmallcoco.project.entity.product.CategoryEntity;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import com.shoppingmallcoco.project.entity.product.ProductOptionEntity;
 
-@DataJpaTest(properties = {
-        "spring.datasource.url=jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1",
-        "spring.datasource.driverClassName=org.h2.Driver",
-        "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
-})
+@DataJpaTest
+@ActiveProfiles("test") // application-test.properties 로드
 class ProductOptionRepositoryTest {
 
 	// Repository 주입
