@@ -21,7 +21,7 @@ function Cart() {
     }
 
     axios
-      .get("http://13.231.28.89:18080/api/coco/members/cart/items", {
+      .get("http://localhost:8080/api/coco/members/cart/items", {
         headers: {
           Authorization: `Bearer ${token}`, 
         },
@@ -67,7 +67,7 @@ function Cart() {
   const updateQuantity = (cartNo, newQty) => {
     axios
       .patch(
-        `http://13.231.28.89:18080/api/coco/members/cart/items/${cartNo}`,
+        `http://localhost:8080/api/coco/members/cart/items/${cartNo}`,
         { qty: newQty },
         {
           headers: {
@@ -101,7 +101,7 @@ function Cart() {
 
     axios
       .delete(
-        `http://13.231.28.89:18080/api/coco/members/cart/items/${cartNo}`,
+        `http://localhost:8080/api/coco/members/cart/items/${cartNo}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, 
@@ -129,7 +129,7 @@ function Cart() {
     Promise.all(
       selectedItems.map((cartNo) =>
         axios.delete(
-          `http://13.231.28.89:18080/api/coco/members/cart/items/${cartNo}`,
+          `http://localhost:8080/api/coco/members/cart/items/${cartNo}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

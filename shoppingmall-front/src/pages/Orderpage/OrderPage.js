@@ -109,7 +109,7 @@ function OrderPage() {
     try {
       // 2. 백엔드 API 호출 (내 정보 조회)
       // Authorization 헤더에 토큰을 실어서 보냅니다.
-      const response = await axios.get('http://13.231.28.89:18080/api/member/me', {
+      const response = await axios.get('http://localhost:8080/api/member/me', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

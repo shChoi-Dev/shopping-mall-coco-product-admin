@@ -38,7 +38,7 @@ export function OrderProvider({ children }) {
 
     try {
       // 백엔드 API 호출 (GET /api/members/me)
-      const response = await axios.get('http://13.231.28.89:18080/api/member/me', {
+      const response = await axios.get('http://localhost:8080/api/member/me', {
         headers: {
           'Authorization': `Bearer ${token}` // 헤더에 토큰 실어 보내기
         }
