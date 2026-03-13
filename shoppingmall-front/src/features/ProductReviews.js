@@ -39,7 +39,7 @@ function ProductReviews({ productNo }) {
                     }
                     headers["Authorization"] = `Bearer ${token}`;
                 }
-                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/reviewPages`, {
+                const response = await axios.get(`/api/products/${productNo}/reviewPages`, {
                     params: {
                         page,
                         size: pageSize,
@@ -70,7 +70,7 @@ function ProductReviews({ productNo }) {
                 alert("로그인이 필요합니다.");
                 return;
             }
-            const response = await axios.get(`http://localhost:8080/api/reviews/${productNo}/getOrderItemNo`, { headers: { Authorization: `Bearer ${token}` } });
+            const response = await axios.get(`/api/reviews/${productNo}/getOrderItemNo`, { headers: { Authorization: `Bearer ${token}` } });
             const orderItemNoFromApi = response.data;
             return navigate(`/reviews/${orderItemNoFromApi}`);
         } catch (error) {

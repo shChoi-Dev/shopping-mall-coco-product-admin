@@ -106,7 +106,7 @@ public class ProductApiController {
      */
     @GetMapping("/products/{prdNo}/similar-skin-tags")
     public ResponseEntity<SimilarSkinStatsDTO> getSimilarSkinTagStats(
-        @PathVariable Long prdNo, 
+        @PathVariable(value = "prdNo") Long prdNo, 
         Authentication authentication) {
         
         // 인증 체크

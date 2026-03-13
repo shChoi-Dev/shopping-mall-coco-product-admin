@@ -76,7 +76,7 @@ function Review() {
         const loadAllTags = async () => {
             setLoadingTags(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/tags`);
+                const response = await axios.get(`/api/tags`);
                 setTags(response.data);
 
             } catch (error) {

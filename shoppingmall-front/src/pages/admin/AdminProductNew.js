@@ -10,7 +10,7 @@ function AdminProductNew() {
 
   useEffect(() => {
     // 카테고리 목록 (Axios)
-    axios.get('http://localhost:8080/api/categories')
+    axios.get('/api/categories')
       .then(res => setCategories(res.data))
       .catch(() => toast.error('카테고리 로드 실패'));
   }, []);
@@ -51,7 +51,7 @@ function AdminProductNew() {
       const token = localStorage.getItem('token');
 
       // Axios POST
-      await axios.post('http://localhost:8080/api/admin/products', dataToSend, {
+      await axios.post('/api/admin/products', dataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

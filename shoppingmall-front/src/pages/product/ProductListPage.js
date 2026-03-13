@@ -48,7 +48,7 @@ function ProductListPage() {
     const fetchKeywordMap = async () => {
       try {
         // 백엔드 API 호출
-        const response = await axios.get('http://localhost:8080/api/codes/search-keywords');
+        const response = await axios.get('/api/codes/search-keywords');
         setKeywordMap(response.data); // 받아온 맵(Map<String, String>) 저장
       } catch (error) {
         console.error("검색어 매핑 정보 로드 실패:", error);
@@ -70,7 +70,7 @@ function ProductListPage() {
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
 
         // 헤더에 Authorization 추가하여 요청
-        const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${member.memNo}`, {
+        const response = await axios.get(`/api/coco/members/profile/${member.memNo}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -175,7 +175,7 @@ function ProductListPage() {
       setIsLoading(true);
       try {
         const queryString = searchParams.toString();
-        const response = await axios.get(`http://localhost:8080/api/products?${queryString}`, {
+        const response = await axios.get(`/api/products?${queryString}`, {
           signal: controller.signal
         });
 
@@ -285,7 +285,7 @@ function ProductListPage() {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       // axios.post 사용
       await axios.post(
-        'http://localhost:8080/api/coco/members/cart/items',
+        '/api/coco/members/cart/items',
         {
           memNo: member.memNo,
           optionNo: product.defaultOptionNo,

@@ -35,10 +35,10 @@ public class AdminOrderApiController {
     // 전체 주문 목록 조회
     @GetMapping
     public ResponseEntity<Page<OrderResponseDto>> getAllOrders(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String searchTerm,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
             Authentication authentication
     ) {
         checkAdminRole(authentication);

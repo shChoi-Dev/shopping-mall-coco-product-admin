@@ -84,7 +84,7 @@ const ComateReviewCard = ({
                         {reviewImages.map((img) => (
                             <img
                                 key={img.reviewImageNo}
-                                src={`http://localhost:8080${img.imageUrl}`}
+                                src={`${process.env.REACT_APP_API_URL}${img.imageUrl}`}
                                 alt="리뷰 이미지"
                                 className="review_img"
                             />

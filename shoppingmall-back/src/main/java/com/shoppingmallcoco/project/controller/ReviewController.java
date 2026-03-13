@@ -202,8 +202,8 @@ public class ReviewController {
 
     // 리뷰 재구매 횟수 조회
     @GetMapping("/products/{productNo}/countReviews/{reviewNo}")
-    public int getReviewsCount(@PathVariable Long productNo,
-        @PathVariable Long reviewNo) {
+    public int getReviewsCount(@PathVariable(value = "productNo") Long productNo,
+        @PathVariable(value = "reviewNo") Long reviewNo) {
         int count = reviewService.getBuyCount(productNo, reviewNo);
         return count;
     }
@@ -231,7 +231,7 @@ public class ReviewController {
 
     //reviewNo 유무 확인
     @GetMapping("/review/{reviewNo}/check")
-    public ResponseEntity<?> checkReviewNo(@PathVariable Long reviewNo) {
+    public ResponseEntity<?> checkReviewNo(@PathVariable(value = "reviewNo") Long reviewNo) {
         boolean exists = reviewRepository.existsById(reviewNo);
         if (exists) {
             return ResponseEntity.ok().build();
@@ -253,11 +253,11 @@ public class ReviewController {
 
     // 리뷰 페이징 및 정렬
     @GetMapping("/products/{prdNo}/reviewPages")
-    public Page<ReviewDTO> getReviewPages(@PathVariable("prdNo") Long prdNo,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(defaultValue = "latest") String sortType,
-        @RequestParam(required = false) Boolean coMate,
+    public Page<ReviewDTO> getReviewPages(@PathVariable(value = "prdNo") Long prdNo,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size,
+        @RequestParam(value = "sortType", defaultValue = "latest") String sortType,
+        @RequestParam(value = "coMate", required = false) Boolean coMate,
         Authentication authentication) {
 
         Long memNo = null;

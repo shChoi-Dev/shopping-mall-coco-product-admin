@@ -20,7 +20,7 @@ const ProductImageGallery = ({ productName, imageUrls }) => {
       {/* 메인 이미지 */}
       <img
         className="main-image"
-        src={selectedImage || ''} // selectedImage가 null일 경우 대비
+        src={selectedImage || '/prd_placeholder.png'} // selectedImage가 null일 경우 대비
         alt={productName}
         onError={(e) => {
           e.target.onerror = null;

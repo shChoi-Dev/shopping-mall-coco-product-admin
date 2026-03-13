@@ -73,7 +73,7 @@ function UpdateReview() {
     useEffect(() => {
         const loadAllTags = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/tags`);
+                const response = await axios.get(`/api/tags`);
                 setTags(response.data);
             } catch (error) {
                 console.error("태그 목록 로딩 실패:", error);
@@ -184,7 +184,7 @@ function UpdateReview() {
                             {previewFiles.map(preview => (
                                 <div key={preview.id} className="preview-component">
                                     <img
-                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://localhost:8080${preview.url}`}
+                                        src={preview.file ? URL.createObjectURL(preview.file) : `${process.env.REACT_APP_API_URL}${preview.url}`}
                                         alt="미리보기"
                                         className="preview-image"
                                     />

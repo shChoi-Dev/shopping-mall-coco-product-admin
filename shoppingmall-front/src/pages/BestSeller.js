@@ -55,7 +55,7 @@ function BestSeller() {
             setLoading(true);
             try {
                 // sort=popularity, size=10으로 요청
-                const response = await fetch('http://localhost:8080/api/products?page=1&size=10&sort=popularity');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/products?page=1&size=10&sort=popularity`);
                 if (!response.ok) throw new Error("데이터 로드 실패");
 
                 const data = await response.json();

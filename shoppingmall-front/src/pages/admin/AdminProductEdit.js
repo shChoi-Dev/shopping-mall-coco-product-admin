@@ -17,8 +17,8 @@ function AdminProductEdit() {
       try {
         // Axios.all을 사용해 병렬 요청
         const [catRes, prdRes] = await Promise.all([
-          axios.get('http://localhost:8080/api/categories'),
-          axios.get(`http://localhost:8080/api/products/${productId}`)
+          axios.get('/api/categories'),
+          axios.get(`/api/products/${productId}`)
         ]);
 
         setCategories(catRes.data);
@@ -66,7 +66,7 @@ function AdminProductEdit() {
       // 토큰 가져오기
       const token = localStorage.getItem('token');
       // Axios PUT
-      await axios.put(`http://localhost:8080/api/admin/products/${productId}`, dataToSend, {
+      await axios.put(`/api/admin/products/${productId}`, dataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

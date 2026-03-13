@@ -59,7 +59,7 @@ function AdminOrderList() {
         status: searchStatus || null,     // 필터 없으면 null
         searchTerm: searchTerm || null    // 검색어 없으면 null
       };
-      const response = await axios.get(`http://localhost:8080/api/admin/orders?page=${currentPage}&size=10`, {
+      const response = await axios.get(`/api/admin/orders`, {
         headers: { Authorization: `Bearer ${token}` },
         params: params
       });
@@ -96,7 +96,7 @@ function AdminOrderList() {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:8080/api/admin/orders/${orderNo}/status`,
+      await axios.patch(`/api/admin/orders/${orderNo}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

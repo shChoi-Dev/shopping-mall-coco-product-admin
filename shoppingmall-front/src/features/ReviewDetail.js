@@ -67,7 +67,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                await axios.delete(`http://localhost:8080/api/reviews/${reviewNo}`, { headers });
+                await axios.delete(`/api/reviews/${reviewNo}`, { headers });
                 onDelete(reviewNo);
             } catch (error) {
                 console.error("리뷰 삭제에 실패했습니다:", error);
@@ -83,7 +83,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
         }
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/api/reviews/${reviewNo}/like`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/reviews/${reviewNo}/like`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -106,7 +106,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
     useEffect(() => {
         const getBuyCount = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/countReviews/${reviewNo}`);
+                const response = await axios.get(`/api/products/${productNo}/countReviews/${reviewNo}`);
                 setBuyCount(response.data);
             } catch (error) {
                 console.log("재구매 횟수 불러오기 실패", error);
@@ -132,7 +132,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
         }
 
         const urls = reviewImages.map(
-            (img) => `http://localhost:8080${img.imageUrl}`
+            (img) => `${process.env.REACT_APP_API_URL}${img.imageUrl}`
         );
 
         Promise.all(urls.map((url) => preloadImage(url)))
@@ -187,7 +187,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     <img
                         className="tag"
                         key={i}
-                        src={`http://localhost:8080${img.imageUrl}`}
+                        src={`${process.env.REACT_APP_API_URL}${img.imageUrl}`}
                         alt="리뷰 이미지"
                     />
                 ))}
