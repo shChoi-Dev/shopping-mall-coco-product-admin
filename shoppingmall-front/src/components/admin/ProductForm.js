@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import TagCheckboxGroup from './TagCheckboxGroup';
 import PropTypes from 'prop-types';
 import '../../css/admin/ProductForm.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css'; // 에디터 기본 CSS 디자인
 
 /**
  * [관리자] 상품 등록 및 수정 양식 컴포넌트
@@ -200,12 +202,11 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             </div>
             <div className="form-group">
               <label className="form-label">상품 설명</label>
-              <textarea
-                id="description"
-                className="form-textarea"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
+              <ReactQuill
+                theme="snow"
+                value={formData.description || ''} // 💡 formData.description으로 변경
+                onChange={(content) => handleChange({ target: { name: 'description', value: content } })}
+                style={{ height: '400px', marginBottom: '50px', backgroundColor: 'white' }}
                 placeholder="상세 설명을 입력하세요"
               />
             </div>
