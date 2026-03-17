@@ -1,9 +1,13 @@
 package com.shoppingmallcoco.project.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +42,9 @@ public class AdminProductApiController {
 	
 	private final AdminProductService prdService;
     private final MemberService memberService;
+    
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 	
 	// 관리자 권한 검증 헬퍼 메서드
 	private void checkAdminRole(Authentication authentication) {
@@ -130,5 +138,40 @@ public class AdminProductApiController {
 		
         Map<String, Long> stats = prdService.getDashboardStats();
         return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+    
+    // 에디터 이미지 업로드 전용 API
+    @PostMapping("/products/editor/image")
+    public ResponseEntity<Map<String, String>> uploadEditorImage(@RequestParam("image") MultipartFile image) {
+        try {
+            // 이미지를 저장할 물리적 경로 설정
+        	String editorUploadPath = uploadDir + "/editor/";
+            File dir = new File(editorUploadPath);
+            if (!dir.exists()) {
+                dir.mkdirs(); // 폴더가 없으면 자동으로 생성
+            }
+
+            // 파일명 중복을 막기 위해 랜덤 이름(UUID) 부여
+            String originalFilename = image.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String savedFilename = UUID.randomUUID().toString() + extension;
+
+            // 지정한 경로에 파일 실제 저장
+            File dest = new File(dir.getAbsolutePath() + File.separator + savedFilename);
+            image.transferTo(dest);
+
+            // 프론트엔드가 이미지를 띄울 때 사용할 URL 생성
+            String imageUrl = "/images/editor/" + savedFilename;
+
+            // 프론트엔드가 기다리고 있는 JSON 형태 { "imageUrl": "..." } 로 응답
+            Map<String, String> response = new HashMap<>();
+            response.put("imageUrl", imageUrl);
+            
+            return ResponseEntity.ok(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

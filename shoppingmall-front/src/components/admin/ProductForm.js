@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import TagCheckboxGroup from './TagCheckboxGroup';
 import PropTypes from 'prop-types';
 import '../../css/admin/ProductForm.css';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'; // 에디터 기본 CSS 디자인
+import { uploadImageWithAuth } from '../../utils/api';
 
 /**
  * [관리자] 상품 등록 및 수정 양식 컴포넌트
@@ -65,6 +66,56 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
    * - url: 화면 표시용 미리보기 URL
    */
   const [imageList, setImageList] = useState([]);
+
+  // 이미지 핸들러 추가
+  const quillRef = useRef(null);
+
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click(); 
+
+    input.addEventListener('change', async () => {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('image', file); 
+
+      try {
+        const response = await uploadImageWithAuth('/admin/products/editor/image', formData);
+        
+        // 결과가 정상이면 JSON으로 변환
+        if (response.ok) {
+            const data = await response.json();
+
+            const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+            const imageUrl = baseUrl + data.imageUrl;
+            
+            const editor = quillRef.current.getEditor();
+            const range = editor.getSelection();
+            editor.insertEmbed(range.index, 'image', imageUrl);
+        } 
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        alert('이미지 업로드에 실패했습니다.');
+      }
+    });
+  };
+
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ 'header': [1, 2, false] }],
+          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+          ['link', 'image'],
+          ['clean']
+        ],
+        handlers: { image: imageHandler }
+      }
+    };
+  }, []);
 
   // 초기 데이터 로드 시 State 동기화
   useEffect(() => {
@@ -203,8 +254,10 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             <div className="form-group">
               <label className="form-label">상품 설명</label>
               <ReactQuill
+                ref={quillRef}
+                modules={modules}
                 theme="snow"
-                value={formData.description || ''} // 💡 formData.description으로 변경
+                value={formData.description || ''}
                 onChange={(content) => handleChange({ target: { name: 'description', value: content } })}
                 style={{ height: '400px', marginBottom: '50px', backgroundColor: 'white' }}
                 placeholder="상세 설명을 입력하세요"

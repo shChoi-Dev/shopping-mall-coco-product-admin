@@ -441,3 +441,26 @@ export const deleteAccount = async (currentPassword) => {
   return data;
 };
 
+// 파일/이미지 업로드 전용 API
+export const uploadImageWithAuth = async (url, formData) => {
+  const token = storage.get(STORAGE_KEYS.TOKEN);
+  const headers = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api${url}`, {
+    method: 'POST',
+    headers: headers,
+    body: formData,
+  });
+
+  if (response.status === 401) {
+    logout();
+    window.location.href = '/login';
+    throw new Error('인증이 만료되었습니다.');
+  }
+
+  return response;
+};
