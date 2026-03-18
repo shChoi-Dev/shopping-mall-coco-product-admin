@@ -51,7 +51,7 @@ const ProductTabs = ({ product }) => {
         {currentTab === 'details' && (
           <div>
             <h3>상품 상세정보</h3>
-            <p style={{ whiteSpace: 'pre-wrap' }}>{product.description}</p>
+            <div style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: product.description }} />
           </div>
         )}
         {currentTab === 'reviews' && (
