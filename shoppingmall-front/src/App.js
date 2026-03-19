@@ -44,6 +44,7 @@ import Forbidden from './pages/error/Forbidden';
 import NoticePage from './pages/NoticePage';
 import EventPage from './pages/EventPage';
 import ProductStopped from './pages/error/ProductStopped';
+import AdminNoticeNew from './pages/admin/AdminNoticeNew';
 
 function App() {
   const location = useLocation();
@@ -97,6 +98,7 @@ function App() {
               <Route path="categories" element={<AdminCategoryList />} />
               <Route path="members" element={<AdminMemberList />} />
               <Route path="orders" element={<AdminOrderList />} />
+              <Route path="notices/new" element={<AdminNoticeNew />} />
             </Route>
           </Route>
           {/* COMATE 관련 - 다른 사용자 계정 */}
