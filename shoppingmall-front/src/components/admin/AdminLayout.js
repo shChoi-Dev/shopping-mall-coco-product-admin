@@ -48,6 +48,11 @@ function AdminLayout() {
               주문 관리
             </Link>
           </li>
+          <li>
+            <Link to="/admin/notices" className={`admin-nav-item ${isActive('/admin/notices') ? 'active' : ''}`}>
+              공지사항 관리
+            </Link>
+          </li>
         </ul>
       </nav>
 

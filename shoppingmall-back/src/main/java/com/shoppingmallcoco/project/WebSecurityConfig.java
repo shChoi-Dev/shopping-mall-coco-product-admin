@@ -59,7 +59,8 @@ public class WebSecurityConfig {
                     "/api/member/reset-password",
                     "/images/**",
                     "/uploads/**",
-                    "/products/**"
+                    "/products/**",
+                    "/api/notices/**"
                 ).permitAll()
                 // 인증 없이 접근 가능한 리뷰 조회 API (GET만 허용)
                 .requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()

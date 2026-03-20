@@ -41,10 +41,12 @@ import { OrderProvider } from './pages/OrderContext';
 import TermsPage from './pages/TermsPage';
 import NotFound from './pages/error/NotFound';
 import Forbidden from './pages/error/Forbidden';
-import NoticePage from './pages/NoticePage';
+import NoticePage from './pages/notice/NoticePage';
 import EventPage from './pages/EventPage';
 import ProductStopped from './pages/error/ProductStopped';
 import AdminNoticeNew from './pages/admin/AdminNoticeNew';
+import AdminNoticeList from './pages/admin/AdminNoticeList';
+import NoticeDetailPage from './pages/notice/NoticeDetailPage';
 
 function App() {
   const location = useLocation();
@@ -98,6 +100,7 @@ function App() {
               <Route path="categories" element={<AdminCategoryList />} />
               <Route path="members" element={<AdminMemberList />} />
               <Route path="orders" element={<AdminOrderList />} />
+              <Route path="notices" element={<AdminNoticeList />} />
               <Route path="notices/new" element={<AdminNoticeNew />} />
             </Route>
           </Route>
@@ -121,6 +124,7 @@ function App() {
 
           {/* footer 공지사항 라우트 */}
           <Route path="/notices" element={<NoticePage />} />
+          <Route path="/notices/:noticeNo" element={<NoticeDetailPage />} />
 
           {/* header 이벤트 라우트 */}
           <Route path="/event" element={<EventPage />} />
