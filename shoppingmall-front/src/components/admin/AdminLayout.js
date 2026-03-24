@@ -53,6 +53,11 @@ function AdminLayout() {
               공지사항 관리
             </Link>
           </li>
+          <li>
+            <Link to="/admin/events" className={`admin-nav-item ${isActive('/admin/events') ? 'active' : ''}`}>
+              이벤트 관리
+            </Link>
+          </li>
         </ul>
       </nav>
 

@@ -1,0 +1,69 @@
+/* ==================================================
+   React Datepicker 커스텀 스타일 (KRDS 스타일)
+   ================================================== */
+
+/* 달력 전체 테두리 및 폰트 깔끔하게 */
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: #eee;
+}
+
+/* 상단 헤더 (연/월) 배경 하얗게 */
+.react-datepicker__header {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  padding-top: 15px;
+}
+
+/* 요일 및 날짜 기본 폰트 색상 (검정색) */
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: #333;
+  font-weight: 500;
+  margin: 0.2rem; /* 간격 살짝 넓히기 */
+}
+
+/* 일요일(첫 번째 칸)은 무조건 빨간색! */
+.react-datepicker__day-name:first-child,
+.react-datepicker__day:first-child {
+  color: #ff4d4f !important;
+}
+
+/* 토요일(마지막 칸) 파란색을 원하신다면 아래 주석을 푸세요 */
+.react-datepicker__day-name:last-child,
+.react-datepicker__day:last-child {
+  color: #1890ff !important;
+} 
+
+/* 이전/다음 달의 날짜 (반투명 회색 처리) */
+.react-datepicker__day--outside-month {
+  color: #bbb !important;
+  opacity: 0.5;
+  font-weight: normal;
+}
+
+/* 마우스 올렸을 때(Hover) 동그랗게 */
+.react-datepicker__day:hover {
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+
+/* 선택된 날짜 */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--in-range {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* 오늘 날짜에 밑줄 또는 테두리 포인트 */
+.react-datepicker__day--today {
+  border: 1px solid #222;
+  border-radius: 50%;
+  font-weight: bold;
+}
