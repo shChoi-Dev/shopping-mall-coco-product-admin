@@ -26,7 +26,8 @@ public class EventResponseDTO {
 		this.title = entity.getTitle();
 		this.content = entity.getContent();
 		this.thumbnailUrl = entity.getThumbnailUrl();
-		this.startDate = entity.getEndDate();
+		this.startDate = entity.getStartDate();
+        this.endDate = entity.getEndDate();
 		this.viewCount = entity.getViewCount();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
