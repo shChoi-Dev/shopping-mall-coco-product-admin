@@ -42,13 +42,15 @@ import TermsPage from './pages/TermsPage';
 import NotFound from './pages/error/NotFound';
 import Forbidden from './pages/error/Forbidden';
 import NoticePage from './pages/notice/NoticePage';
-import EventPage from './pages/EventPage';
 import ProductStopped from './pages/error/ProductStopped';
 import AdminNoticeNew from './pages/admin/AdminNoticeNew';
 import AdminNoticeList from './pages/admin/AdminNoticeList';
 import NoticeDetailPage from './pages/notice/NoticeDetailPage';
 import AdminEventNew from './pages/admin/AdminEventNew';
 import AdminEventList from './pages/admin/AdminEventList';
+import AdminEventEdit from './pages/admin/AdminEventEdit';
+import EventPage from './pages/event/EventPage';
+import EventDetailPage from './pages/event/EventDetailPage';
 
 function App() {
   const location = useLocation();
@@ -106,6 +108,7 @@ function App() {
               <Route path="notices/new" element={<AdminNoticeNew />} />
               <Route path="events" element={<AdminEventList />} />
               <Route path="events/new" element={<AdminEventNew />} />
+              <Route path="events/edit/:eventNo" element={<AdminEventEdit />} />
             </Route>
           </Route>
           {/* COMATE 관련 - 다른 사용자 계정 */}
@@ -131,7 +134,8 @@ function App() {
           <Route path="/notices/:noticeNo" element={<NoticeDetailPage />} />
 
           {/* header 이벤트 라우트 */}
-          <Route path="/event" element={<EventPage />} />
+          <Route path="/events" element={<EventPage />} />
+          <Route path="/events/:eventNo" element={<EventDetailPage />} />
 
         </Routes>
         {!hideHeaderFooter && <Footer />}
