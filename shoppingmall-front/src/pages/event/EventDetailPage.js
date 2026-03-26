@@ -9,7 +9,9 @@ const EventDetailPage = () => {
     useEffect(() => {
         const fetchEventDetail = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/events/${eventNo}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/events/${eventNo}`, {
+                    credentials: 'include' // 벡엔드와 쿠키를 주고 받음
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setEvent(data);

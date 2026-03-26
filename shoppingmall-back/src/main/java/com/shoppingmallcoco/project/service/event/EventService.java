@@ -42,10 +42,12 @@ public class EventService {
 	}
 	
 	@Transactional
-	public EventResponseDTO getEventById(Long eventNo) {
+	public EventResponseDTO getEventById(Long eventNo, boolean isNewView) {
 		EventEntity event = eventRepository.findById(eventNo)
 										   .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이벤트입니다."));
-		event.increaseViewCount();
+		if(isNewView) {
+			event.increaseViewCount();
+		}
 		
 		return new EventResponseDTO(event);
 	}
