@@ -26,7 +26,47 @@ const EventDetailPage = () => {
         fetchEventDetail();
     }, [eventNo, navigate]);
 
-    if (!event) return <div style={{ textAlign: 'center', padding: '100px' }}>로딩 중...</div>;
+    // 스켈레톤 UI
+    if (!event) {
+    return (
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '50px 20px', minHeight: '600px' }}>
+        {/* 스켈레톤 깜빡임 애니메이션 CSS */}
+        <style>
+          {`
+            @keyframes pulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.4; }
+            }
+            .skeleton {
+              background-color: #f0f0f0;
+              border-radius: 4px;
+              animation: pulse 1.5s ease-in-out infinite;
+            }
+          `}
+        </style>
+        
+        <h2 style={{ textAlign: 'center', marginBottom: '40px', fontWeight: 'bold' }}>EVENT</h2>
+        
+        <div style={{ borderBottom: '2px solid #000', paddingBottom: '20px', marginBottom: '30px' }}>
+          {/* 뱃지 스켈레톤 */}
+          <div className="skeleton" style={{ width: '60px', height: '24px', marginBottom: '15px' }}></div>
+          {/* 제목 스켈레톤 */}
+          <div className="skeleton" style={{ width: '70%', height: '36px', marginBottom: '15px' }}></div>
+          {/* 날짜 및 조회수 스켈레톤 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="skeleton" style={{ width: '250px', height: '16px' }}></div>
+            <div className="skeleton" style={{ width: '80px', height: '16px' }}></div>
+          </div>
+        </div>
+
+        {/* 본문 내용 스켈레톤 (큰 박스 + 줄글) */}
+        <div className="skeleton" style={{ width: '100%', height: '300px', marginBottom: '20px', borderRadius: '8px' }}></div>
+        <div className="skeleton" style={{ width: '90%', height: '20px', marginBottom: '10px' }}></div>
+        <div className="skeleton" style={{ width: '80%', height: '20px', marginBottom: '10px' }}></div>
+        <div className="skeleton" style={{ width: '85%', height: '20px' }}></div>
+      </div>
+    );
+  }
 
     // 상세 페이지에서도 똑같이 뱃지를 계산해서 보여줌
     const getEventStatus = (start, end) => {
