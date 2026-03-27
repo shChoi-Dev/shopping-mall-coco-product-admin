@@ -9,7 +9,9 @@ const NoticeDetailPage = () => {
     useEffect(() => {
         const fetchNoticeDetail = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notices/${noticeNo}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notices/${noticeNo}`, {
+                    credentials: 'include' // 쿠키 포함 허락
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setNotice(data);

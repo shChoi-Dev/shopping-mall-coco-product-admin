@@ -39,7 +39,7 @@ public class NoticeEntity {
 	private LocalDateTime updatedAt; // 수정일
 	
 	// 조회수 증가 편의 메서드
-	public void increaseViesCount() {
+	public void increaseViewCount() {
 		this.viewCount++;
 	}
 

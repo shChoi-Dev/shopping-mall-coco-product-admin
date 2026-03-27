@@ -41,11 +41,14 @@ public class NoticeService {
 	
 	// 공지사항 상세 조회 (조회수 1 증가)
 	@Transactional
-	public NoticeResponseDTO getNoticeById(Long noticeNo) {
+	public NoticeResponseDTO getNoticeById(Long noticeNo, boolean isNewView) {
 		NoticeEntity notice = noticeRepository.findById(noticeNo)
 				                  			  .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공지사항입니다."));
 		
-		notice.increaseViesCount(); // 조회수 증가
+		if (isNewView) {
+            notice.increaseViewCount(); // 조회수 증가
+        }
+		
 		return new NoticeResponseDTO(notice);
 	}
 	

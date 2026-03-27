@@ -51,6 +51,7 @@ import AdminEventList from './pages/admin/AdminEventList';
 import AdminEventEdit from './pages/admin/AdminEventEdit';
 import EventPage from './pages/event/EventPage';
 import EventDetailPage from './pages/event/EventDetailPage';
+import AdminNoticeEdit from './pages/admin/AdminNoticeEdit';
 
 function App() {
   const location = useLocation();
@@ -106,6 +107,7 @@ function App() {
               <Route path="orders" element={<AdminOrderList />} />
               <Route path="notices" element={<AdminNoticeList />} />
               <Route path="notices/new" element={<AdminNoticeNew />} />
+              <Route path="notices/edit/:noticeNo" element={<AdminNoticeEdit />} />
               <Route path="events" element={<AdminEventList />} />
               <Route path="events/new" element={<AdminEventNew />} />
               <Route path="events/edit/:eventNo" element={<AdminEventEdit />} />
