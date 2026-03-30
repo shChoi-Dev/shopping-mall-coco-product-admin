@@ -1,3 +1,4 @@
+# --- [ 빌드 및 IDE 기본 설정 ] ---
 HELP.md
 .gradle
 build/
@@ -33,5 +34,13 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# DB, API 키 등 민감한 로컬 설정 파일
+application-local.properties
+application-test.properties
+
+# 로컬 테스트용 업로드 이미지 폴더
+test-dir/
+/src/main/resources/static/uploads/
+
+# VS Code
 .vscode/
