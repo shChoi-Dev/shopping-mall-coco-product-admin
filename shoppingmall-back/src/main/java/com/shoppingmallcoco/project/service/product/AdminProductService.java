@@ -3,6 +3,7 @@ package com.shoppingmallcoco.project.service.product;
 import com.shoppingmallcoco.project.dto.product.ProductSaveDTO;
 import com.shoppingmallcoco.project.entity.product.*;
 import com.shoppingmallcoco.project.repository.product.*;
+import com.shoppingmallcoco.project.service.common.CloudinaryService;
 import com.shoppingmallcoco.project.service.review.IReviewService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,17 +40,7 @@ public class AdminProductService {
 	private final CategoryRepository catRepo;
 	private final ProductImageRepository prdImgRepo;
 	private final IReviewService reviewService;
-
-	@Value("${file.upload-dir}") // application.properties의 값 주입
-	private String rootDir;
-
-	@Value("${app.domain}") // application.properties의 도메인 주소 주입
-	private String domain;
-
-	// 상품 전용 업로드 폴더 경로
-	private String getProductUploadPath() {
-		return Paths.get(rootDir, "products").toString() + File.separator;
-	}
+	private final CloudinaryService cloudinaryService;
 
 	/**
 	 * API: 관리자 상품 등록
@@ -158,15 +149,6 @@ public class AdminProductService {
 			currentImages.removeAll(toDelete);
 			prdImgRepo.deleteAll(toDelete);
 
-			// 로컬 파일 삭제
-			for (ProductImageEntity img : toDelete) {
-				// 파일명만 추출
-				String fileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
-
-				// 실제 삭제 경로
-				Path filePath = Paths.get(getProductUploadPath() + fileName);
-				Files.deleteIfExists(filePath);
-			}
 		}
 
 		// 순서 재정렬 및 새 파일 저장
@@ -196,7 +178,7 @@ public class AdminProductService {
 		}
 	}
 
-	// 단일 파일 저장 로직 (UUID 파일명 생성)
+	// 단일 파일 저장 로직 (Cloudinary 버전)
 	private void saveSingleImage(ProductEntity product, MultipartFile file, int sortOrder) throws IOException {
 		if (file.isEmpty())
 			return;
@@ -209,66 +191,20 @@ public class AdminProductService {
 		// 허용된 이미지 타입만 허용
 		List<String> allowedTypes = List.of("image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp");
 		if (!allowedTypes.contains(contentType.toLowerCase())) {
-			throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다. (JPEG, PNG, GIF, WEBP만 허용)");
+			throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다.");
 		}
 		// 파일 크기 검증 (10MB 제한)
 		if (file.getSize() > 10 * 1024 * 1024) {
 			throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
 		}
 
-		// 폴더 생성 (products 폴더가 없으면 자동 생성)
-		File dir = new File(getProductUploadPath());
-		if (!dir.exists())
-			dir.mkdirs(); // mkdirs는 상위 폴더까지 생성함
+		// cloudinary로 전송 (압축/리사이징은 클라우드가 수행)
+		String secureUrl = cloudinaryService.uploadImage(file);
 
-		// 파일명 생성 및 저장
-		String originalFilename = file.getOriginalFilename();
-		String uuid = UUID.randomUUID().toString();
-		
-		// 원본 파일명에서 확장자 제거 후 .webp 붙이기
-		String baseName = originalFilename;
-		if (originalFilename.contains(".")) {
-		    baseName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-		}
-		String savedFileName = uuid + "_" + baseName + ".webp"; // 확장자를 webp로 고정
-
-		File dest = new File(getProductUploadPath() + savedFileName);
-		
-		// 원본 그대로 저장하지 않고, 리사이징 및 압축 후 저장
-		try {
-			Thumbnails.of(file.getInputStream())
-				.size(1000, 1000)   // 최대 너비/높이를 1000px로 제한 (비율 유지)
-				.outputFormat("webp") // 강제로 WebP 포맷 사용
-				.outputQuality(0.8) // 이미지 품질을 80%로 설정 (용량 대폭 감소, 화질은 유지)
-				.toFile(dest);
-		} catch (IllegalArgumentException | IOException e) {
-			// 실패 시 WebP 라이브러리가 없거나 오류 발생 시 JPG로 대체 저장
-		    System.out.println("⚠️ WebP 변환 실패(지원되지 않음). JPG로 저장합니다. 원인: " + e.getMessage());
-
-		    // 파일명 확장자를 .jpg로 변경
-		    String jpgFileName = savedFileName.replace(".webp", ".jpg");
-		    File jpgDest = new File(getProductUploadPath() + jpgFileName);
-
-		    try {
-		        // JPG로 다시 저장 시도
-		        Thumbnails.of(file.getInputStream())
-		            .size(1000, 1000)
-		            .outputFormat("jpg")
-		            .outputQuality(0.8)
-		            .toFile(jpgDest);
-		        
-		        // DB에 저장될 파일명 변수도 jpg로 교체
-		        savedFileName = jpgFileName;
-		        
-		    } catch (IOException ex) {
-		        throw new RuntimeException("이미지 저장 중 오류 발생", ex);
-		    }
-		}
-
-		// DB에 경로로 저장
+		// DB에 반환받은 클라우드 저장
 		ProductImageEntity image = new ProductImageEntity();
 		image.setProduct(product);
-		image.setImageUrl(domain + "/images/products/" + savedFileName);
+		image.setImageUrl(secureUrl);
 		image.setSortOrder(sortOrder);
 		prdImgRepo.save(image);
 	}

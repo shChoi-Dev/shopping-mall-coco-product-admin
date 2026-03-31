@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { fetchWithAuth, uploadImageWithAuth } from '../../utils/api';
+import { fetchWithAuth, uploadImageWithAuth, getImageUrl } from '../../utils/api';
 import '../../css/admin/ProductForm.css'; 
 
 const AdminNoticeNew = () => {
@@ -27,12 +27,9 @@ const AdminNoticeNew = () => {
         
         if (response.ok) {
           const data = await response.json();
-          const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-          const imageUrl = baseUrl + data.imageUrl;
-
           const editor = quillRef.current.getEditor();
           const range = editor.getSelection();
-          editor.insertEmbed(range.index, 'image', imageUrl);
+          editor.insertEmbed(range.index, 'image', getImageUrl(data.imageUrl));
         }
       } catch (error) {
         console.error('이미지 업로드 실패:', error);

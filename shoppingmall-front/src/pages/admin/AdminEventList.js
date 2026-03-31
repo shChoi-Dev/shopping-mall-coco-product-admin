@@ -4,6 +4,7 @@ import { fetchWithAuth } from '../../utils/api';
 import '../../css/admin/AdminProductList.css';
 import Spinner from '../../components/admin/Spinner';
 import Pagination from '../../components/admin/Pagination';
+import { getImageUrl } from '../../utils/api';
 
 const AdminEventList = () => {
   const [events, setEvents] = useState([]);
@@ -111,7 +112,7 @@ const AdminEventList = () => {
                       <td style={{ padding: '15px' }}>{event.eventNo}</td>
                       <td>
                         {event.thumbnailUrl ? (
-                          <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${event.thumbnailUrl}`} alt="썸네일" style={{ width: '80px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                          <img src={getImageUrl(event.thumbnailUrl)} alt="썸네일" style={{ width: '80px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
                         ) : (
                           <span style={{ fontSize: '12px', color: '#999' }}>이미지 없음</span>
                         )}

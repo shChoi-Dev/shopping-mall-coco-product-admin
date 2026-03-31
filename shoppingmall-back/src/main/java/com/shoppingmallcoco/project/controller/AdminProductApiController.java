@@ -27,6 +27,7 @@ import com.shoppingmallcoco.project.dto.product.ProductSaveDTO;
 import com.shoppingmallcoco.project.dto.product.ProductDetailResponseDTO;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import com.shoppingmallcoco.project.service.auth.MemberService;
+import com.shoppingmallcoco.project.service.common.CloudinaryService;
 import com.shoppingmallcoco.project.service.product.AdminProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,9 @@ public class AdminProductApiController {
 	
 	private final AdminProductService prdService;
     private final MemberService memberService;
+    
+    // Cloudinary 서비스 추가
+    private final CloudinaryService cloudinaryService;
     
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -140,32 +144,16 @@ public class AdminProductApiController {
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
     
-    // 에디터 이미지 업로드 전용 API
+    // 에디터 이미지 업로드 전용 API (Cloudinary)
     @PostMapping("/products/editor/image")
     public ResponseEntity<Map<String, String>> uploadEditorImage(@RequestParam("image") MultipartFile image) {
         try {
-            // 이미지를 저장할 물리적 경로 설정
-        	String editorUploadPath = uploadDir + "/editor/";
-            File dir = new File(editorUploadPath);
-            if (!dir.exists()) {
-                dir.mkdirs(); // 폴더가 없으면 자동으로 생성
-            }
+        	// 클라우디너리를 사용하고 URL 받아오기
+            String secureUrl = cloudinaryService.uploadImage(image);
 
-            // 파일명 중복을 막기 위해 랜덤 이름(UUID) 부여
-            String originalFilename = image.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String savedFilename = UUID.randomUUID().toString() + extension;
-
-            // 지정한 경로에 파일 실제 저장
-            File dest = new File(dir.getAbsolutePath() + File.separator + savedFilename);
-            image.transferTo(dest);
-
-            // 프론트엔드가 이미지를 띄울 때 사용할 URL 생성
-            String imageUrl = "/images/editor/" + savedFilename;
-
-            // 프론트엔드가 기다리고 있는 JSON 형태 { "imageUrl": "..." } 로 응답
+            // 프론트엔드가 기다리고 있는 JSON 형태로 응답
             Map<String, String> response = new HashMap<>();
-            response.put("imageUrl", imageUrl);
+            response.put("imageUrl", secureUrl); 
             
             return ResponseEntity.ok(response);
 

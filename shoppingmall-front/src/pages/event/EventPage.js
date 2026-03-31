@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../../utils/api';
 
 const EventPage = () => {
   const [events, setEvents] = useState([]);
@@ -70,7 +71,7 @@ const EventPage = () => {
                 {/* 썸네일 이미지 */}
                 <div style={{ width: '100%', height: '200px', backgroundColor: '#f9f9f9', overflow: 'hidden' }}>
                   {event.thumbnailUrl ? (
-                    <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${event.thumbnailUrl}`} alt="이벤트 썸네일" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={getImageUrl(event.thumbnailUrl)} alt="이벤트 썸네일" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb' }}>No Image</div>
                   )}

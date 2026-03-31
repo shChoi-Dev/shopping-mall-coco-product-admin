@@ -464,3 +464,13 @@ export const uploadImageWithAuth = async (url, formData) => {
 
   return response;
 };
+
+// 이미지 URL을 변환해주는 함수
+export const getImageUrl = (path) => {
+  if (!path) return ''; // 이미지가 없으면 빈 문자열 반환
+  if (path.startsWith('http')) return path; // 클라우디너리 주소면 그대로 통과
+  
+  // 로컬 주소면 우리가 설정해둔 환경변수(localhost)를 앞에 붙여줌
+  const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+  return `${baseUrl}${path}`;
+};
