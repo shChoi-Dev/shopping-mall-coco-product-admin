@@ -12,8 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class LocalFileUploadService implements FileUploadService {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+	private String uploadDir = "uploads";
 
     @Override
     public String upload(MultipartFile file) {

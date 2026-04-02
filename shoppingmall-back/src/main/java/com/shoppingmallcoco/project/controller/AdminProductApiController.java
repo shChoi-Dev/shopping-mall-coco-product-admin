@@ -46,9 +46,6 @@ public class AdminProductApiController {
     
     // Cloudinary 서비스 추가
     private final CloudinaryService cloudinaryService;
-    
-    @Value("${file.upload-dir}")
-    private String uploadDir;
 	
 	// 관리자 권한 검증 헬퍼 메서드
 	private void checkAdminRole(Authentication authentication) {

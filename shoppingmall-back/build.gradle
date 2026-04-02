@@ -51,10 +51,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     
     // Cloudinary 라이브러리
     implementation 'com.cloudinary:cloudinary-http44:1.36.0'
+    
+    // Oracle Cloud 지갑 보안 접속을 위한 마스터키
+    implementation 'com.oracle.database.security:oraclepki:23.26.1.0.0'
+    implementation 'com.oracle.database.security:osdt_core:21.21.0.0'
+    implementation 'com.oracle.database.security:osdt_cert:21.21.0.0'
 }
 
 tasks.named('test') {
