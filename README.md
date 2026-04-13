@@ -4,9 +4,8 @@
 ## 🚀 배포 및 시연 (Deployment & Demo)
 
 | 서비스 바로가기 및 계정 정보 | 프로젝트 시연 영상 |
-| :---: | :---: |
-| • **Frontend (Vercel)**: [바로가기](https://shopping-mall-coco-product-admin.vercel.app/) <br> • **Backend API (Render)**: [바로가기](https://coco-back.onrender.com) <br><br> **[테스트 계정]** <br> • **일반 유저**: `test01` / `test1234` <br> • **관리자**: `admin` / `admin1234` | <a href="https://www.youtube.com/watch?v=7Ta6qJzgdss" target="_blank"><img src="https://img.youtube.com/vi/7Ta6qJzgdss/0.jpg" width="320px" alt="시연영상"></a><br>*(이미지 클릭 시 이동)* |
-
+| :--- | :--- |
+| • **Frontend (Vercel)**: [바로가기](https://shopping-mall-coco-product-admin.vercel.app/) <br> • **Backend API (Render)**: [바로가기](https://coco-back.onrender.com) <br>🚨(무료 서버 특성상 초기 접속 시 3~5분 정도 소요) <br><br> **[테스트 계정]** <br> • **일반 유저**: `test01` / `test1234` <br> • **관리자**: `admin` / `admin1234` | <a href="https://www.youtube.com/watch?v=7Ta6qJzgdss" target="_blank"><img src="https://img.youtube.com/vi/7Ta6qJzgdss/0.jpg" width="320px" alt="시연영상"></a><br>*(이미지 클릭 시 이동)* |
 
 > **프로젝트 개요**
 > - **수행 기간**:
@@ -17,6 +16,21 @@
 > - **기술 스택**: Java 21, Spring Boot 3.5, Spring Security, Oracle Cloud DB, React, Docker, Vercel, Render, Cloudinary
 
 ---
+
+## ✨ 주요 기능 및 기술적 성과 (Key Features)
+
+* **상품 검색 최적화 (Debounce 적용)**
+  상품 검색 창에 사용자가 타이핑할 때마다 발생하는 과도한 API 호출을 방지하기 위해, `setTimeout`을 활용한 **Debounce(디바운스) 로직을 프론트엔드 단에 직접 구현**했습니다. 입력을 멈춘 후 0.5초 뒤에만 서버로 요청을 보내도록 하여 불필요한 네트워크 트래픽을 줄이고 서버 부하를 최소화했습니다.
+
+* **Oracle Cloud Wallet 기반 보안 연결 구축**
+  단순한 ID/PW 방식의 데이터베이스 연결을 넘어, 실제 상용 서비스 수준의 보안을 고려하여 **Oracle Cloud Wallet을 활용한 상호 TLS(mTLS) 인증 방식**을 도입했습니다. 클라우드 DB와의 통신 구간을 암호화하여 데이터 보안성을 크게 높였습니다.
+
+* **운영 편의성을 고려한 관리자(Admin) 통합 도구 설계**
+  단순한 상품 등록을 넘어 실제 서비스 운영을 고려하여 이벤트, 공지사항 등을 관리할 수 있는 전용 API 컨트롤러(`AdminEventApiController`, `AdminNoticeApiController` 등)를 설계하고 구축했습니다. 관리자 페이지 내에서 기간 설정, 이미지 관리, 상태 동기화 등이 실시간으로 이루어지도록 비즈니스 로직을 최적화했습니다.
+
+---
+
+## 💡 세부 고도화 및 최적화 내역 (Details)
 
 ### 🛡️ [Ver 2.0] 관리자 운영 도구 시스템 고도화 (Notice & Event CRUD)
 단순한 상품 관리를 넘어 실제 서비스 운영 환경을 고려한 **공지사항 및 이벤트 통합 관리 시스템**을 직접 설계하고 API를 구축했습니다.
@@ -34,10 +48,10 @@
 ### ☁️ [Ver 2.0] 클라우드 인프라 이전 및 Docker 배포 환경 구축
 * **Docker 기반 배포**: Java 21 환경 제약을 극복하기 위해 `Dockerfile`을 직접 작성하여 Render 컨테이너 배포 성공.
 * **Cloudinary CDN 연동**: 서버 재시작 시 로컬 스토리지가 초기화되는 문제를 외부 스토리지 연동으로 해결.
-* **Render Cold Start 대응**: 무료 티어 특성상 첫 접속 시 발생하는 로딩 지연(30초~1분)을 README에 명시하여 사용자 경험(UX) 가이드 제공.
+* **Render Cold Start 대응**: 무료 티어 특성상 첫 접속 시 발생하는 로딩 지연(3~5분)을 README에 명시하여 사용자 경험(UX) 가이드 제공.
 
 > **⚠️ Render 배포 환경 기술 참고사항**
-> * **Cold Start**: Render 무료 티어 특성상 약 15분간 요청이 없으면 서버가 Sleep 상태로 전환됩니다. 첫 접속 시 약 1분 이상의 로딩 지연이 발생할 수 있습니다.
+> * **Cold Start**: Render 무료 티어 특성상 일정 시간 요청이 없으면 서버가 Sleep 상태로 전환됩니다. 첫 접속 시 컨테이너가 다시 구동되느라 약 3~5분의 로딩 지연이 발생할 수 있습니다.
 > * **Java 21 컨테이너화**: 무료 티어의 제약을 극복하기 위해 `Dockerfile`을 직접 작성하여 배포 환경을 구축했습니다.
 > * **이미지 영속성**: 서버 재시작 시 데이터가 초기화되는 문제를 해결하고자 **Cloudinary(CDN)** 를 연동했습니다.
 
@@ -61,7 +75,7 @@
 
 ### 폼 데이터(FormData) 전송 시 Content-Type 충돌 해결
 * **문제**: 에디터 이미지를 백엔드로 비동기 전송할 때 `MultipartException`이 발생하며 업로드가 거부됨.
-* **원인 및 해결**: 프론트엔드 fetch 요청 시 `headers`에 `Content-Type: multipart/form-data`를 수동으로 명시한 것이 원인이었습니다. 브라우저가 파일의 boundary 값을 포함해 자동으로 헤더를 생성하도록 수동 설정을 제거하여 정상적인 파일 업로드를 구현했습니다.
+* **원인 및 해결**: 프론트엔드 fetch 요청 시 `headers`에 `Content-Type: multipart/form-data`를 수동으로 명시한 것이 원인이었습니다. 브라우저가 파일의 boundary 값을 포함해 자동으로 헤더 생성하도록 수동 설정을 제거하여 정상적인 파일 업로드를 구현했습니다.
 
 ### DTO 매핑 누락으로 인한 1970년 날짜 렌더링 버그 해결
 * **문제**: 이벤트 종료일을 정상 선택했음에도 화면에 "1970년 1월 1일"로 노출되는 현상 발생.
